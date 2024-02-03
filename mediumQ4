@@ -2,8 +2,8 @@
 waterCollection :: [Int] -> Int
 waterCollection heights = sum $ zipWith min maxL maxR `zipWith` subtract heights
   where
-    maxL = scanl1 max heights -- Maximum from the left
-    maxR = scanr1 max heights -- Maximum from the right
+    maxLeft = scanl1 max heights -- Maximum from the left
+    maxRight = scanr1 max heights -- Maximum from the right
 
 -- Main function to run the test cases
 main :: IO ()
