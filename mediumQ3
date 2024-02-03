@@ -1,0 +1,41 @@
+type Grid = [[Int]]
+
+-- The Game of Life function
+gameOfLife :: Grid -> Grid
+gameOfLife grid = [[nextState (x, y) | y <- [0 .. length (head grid) - 1]] | x <- [0 .. length grid - 1]]
+  where
+    nextState (x, y) =
+      let liveNeighbors = countLiveNeighbors (x, y)
+       in case (grid !! x !! y, liveNeighbors) of
+            (1, n) | n < 2 || n > 3 -> 0
+            (1, _) -> 1
+            (0, 3) -> 1
+            _ -> 0
+
+    countLiveNeighbors (x, y) = length $ filter (== 1) $ map (getCellValue (x, y)) neighborOffsets
+
+    getCellValue (x, y) (dx, dy) = let (newX, newY) = (x + dx, y + dy)
+                                    in if newX >= 0 && newX < length grid && newY >= 0 && newY < length (head grid)
+                                       then grid !! newX !! newY
+                                       else 0
+
+    neighborOffsets = [(i, j) | i <- [-1..1], j <- [-1..1], i /= 0 || j /= 0]
+
+-- Main function to run the test cases
+main :: IO ()
+main = do
+    -- Test cases
+    putStrLn "Test 1: "
+    print $ gameOfLife [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]
+    
+    putStrLn "Test 2: "
+    print $ gameOfLife [[1,1],[1,0]]
+    
+    putStrLn "Test 3: "
+    print $ gameOfLife [[1,1],[1,1]]
+    
+    putStrLn "Test 4: "
+    print $ gameOfLife [[1,0],[0,1]]
+    
+    putStrLn "Test 5: "
+    print $ gameOfLife [[0,1,0,0],[0,1,1,1],[1,0,1,1]]

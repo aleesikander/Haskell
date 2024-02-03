@@ -1,0 +1,43 @@
+data LinkedList a = Null | ListNode a (LinkedList a) deriving (Show, Eq)
+
+-- A function to convert a LinkedList to a regular list
+toList :: LinkedList a -> [a]
+toList Null = []
+toList (ListNode x xs) = x : toList xs
+
+-- A function to convert a regular list to a LinkedList
+fromList :: [a] -> LinkedList a
+fromList [] = Null
+fromList (x:xs) = ListNode x (fromList xs)
+
+-- A function to find the longest common substring between two LinkedLists
+longestCommonString :: Eq a => LinkedList a -> LinkedList a -> LinkedList a
+longestCommonString xs ys = fromList $ lcs (toList xs) (toList ys)
+  where
+    lcs :: Eq a => [a] -> [a] -> [a]
+    lcs [] _ = []
+    lcs _ [] = []
+    lcs (x:xs) (y:ys)
+        | x == y = x : lcs xs ys
+        | otherwise = longest (lcs (x:xs) ys) (lcs xs (y:ys))
+
+    longest :: Eq a => [a] -> [a] -> [a]
+    longest a b = if length a > length b then a else b
+
+-- Helper to run a single test case
+runTest :: (Eq a, Show a) => LinkedList a -> LinkedList a -> LinkedList a -> String -> IO ()
+runTest list1 list2 expected description = do
+    putStrLn description
+    if longestCommonString list1 list2 == expected
+    then putStrLn "Test passed."
+    else putStrLn "Test failed."
+
+-- Main function to run the tests
+main :: IO ()
+main = do
+    runTest (Null :: LinkedList Char) (Null :: LinkedList Char) (Null :: LinkedList Char) "Test Case 1: Null and Null should give Null."
+    runTest (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) (Null :: LinkedList Char) (Null :: LinkedList Char) "Test Case 2: Non-empty and Null should give Null."
+    runTest (Null :: LinkedList Char) (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) (Null :: LinkedList Char) "Test Case 3: Null and Non-empty should give Null."
+    runTest (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) "Test Case 4: Identical lists should give themselves."
+    -- Add the rest of your tests here following the same pattern...
+

@@ -1,0 +1,28 @@
+data LinkedList a = Null | ListNode a (LinkedList a) deriving (Show, Eq)
+
+-- Function to find the longest common substring of two LinkedLists
+longestCommonString :: Eq a => LinkedList a -> LinkedList a -> LinkedList a
+longestCommonString Null _ = Null
+longestCommonString _ Null = Null
+longestCommonString (ListNode x xs) (ListNode y ys)
+    | x == y = ListNode x (longestCommonString xs ys)
+    | otherwise = longerSublist (longestCommonString (ListNode x xs) ys) (longestCommonString xs (ListNode y ys))
+  where
+    longerSublist Null b = b
+    longerSublist a Null = a
+    longerSublist a@(ListNode x xs) b@(ListNode y ys)
+        | listLength a > listLength b = a
+        | otherwise = b
+
+    listLength Null = 0
+    listLength (ListNode _ xs) = 1 + listLength xs
+
+-- Main function to run the tests
+main :: IO ()
+main = do
+    -- Replace these with actual test framework calls if using HSpec or similar
+    print $ longestCommonString Null Null == Null
+    print $ longestCommonString (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) Null == Null
+    print $ longestCommonString Null (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) == Null
+    print $ longestCommonString (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) (ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))) == ListNode 'a' (ListNode 'b' (ListNode 'c' (ListNode 'd' (ListNode 'e' Null))))
+    -- Add more test cases as needed

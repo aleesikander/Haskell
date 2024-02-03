@@ -1,0 +1,49 @@
+
+data Tree a = Nil | TreeNode (Tree a) a (Tree a) deriving (Show, Eq)
+
+-- Overload the '+' operator for Tree
+instance Num a => Num (Tree a) where
+  (+) = treeAdd
+  -- These instances are needed to satisfy Num but are not meaningful for Tree.
+  (-) = \_ _ -> Nil
+  (*) = \_ _ -> Nil
+  abs = const Nil
+  signum = const Nil
+  fromInteger = const Nil
+
+-- Define how two trees are added together
+treeAdd :: Num a => Tree a -> Tree a -> Tree a
+treeAdd Nil b = b
+treeAdd a Nil = a
+treeAdd (TreeNode aLeft aVal aRight) (TreeNode bLeft bVal bRight) =
+  TreeNode (treeAdd aLeft bLeft) (aVal + bVal) (treeAdd aRight bRight)
+
+main :: IO ()
+main = do
+    -- Test cases
+    let result1 = TreeNode (TreeNode Nil 1 Nil) 2 (TreeNode Nil 3 Nil) + TreeNode (TreeNode Nil 1 Nil) 2 (TreeNode Nil 3 Nil)
+    putStrLn $ "Test result1: " ++ show result1
+
+    let result2 = TreeNode (TreeNode Nil 1 Nil) 2 (TreeNode Nil 3 Nil) + TreeNode Nil 2 (TreeNode Nil 3 Nil)
+    putStrLn $ "Test result2: " ++ show result2
+
+    let result3 = Nil + Nil
+    putStrLn $ "Test result3: " ++ show result3
+
+    let result4 = Nil + TreeNode (TreeNode Nil 1 Nil) 2 (TreeNode Nil 3 Nil)
+    putStrLn $ "Test result4: " ++ show result4
+
+    let result5 = TreeNode (TreeNode (TreeNode Nil 1 (TreeNode Nil (-2) Nil)) 3 Nil) 4 (TreeNode Nil 2 (TreeNode Nil 7 (TreeNode Nil (-7) Nil))) + TreeNode (TreeNode (TreeNode (TreeNode Nil 0 Nil) 1 Nil) 3 (TreeNode (TreeNode Nil 1 Nil) 6 (TreeNode Nil (-2) Nil))) 4 (TreeNode (TreeNode (TreeNode Nil 9 Nil) 5 (TreeNode Nil 4 Nil)) 2 (TreeNode (TreeNode Nil (-5) Nil) 7 Nil))
+    putStrLn $ "Test result5: " ++ show result5
+
+    let result6 = TreeNode (TreeNode (TreeNode Nil 1 Nil) 3 (TreeNode Nil 6 Nil)) 4 (TreeNode (TreeNode Nil 5 Nil) 2 (TreeNode Nil 7 Nil)) + TreeNode (TreeNode (TreeNode Nil 1 Nil) 3 (TreeNode Nil 6 Nil)) 4 (TreeNode (TreeNode Nil 5 Nil) 2 (TreeNode Nil 7 Nil))
+    putStrLn $ "Test result6: " ++ show result6
+
+-- Expected outputs for manual verification
+-- Result1 should be TreeNode (TreeNode Nil 2 Nil) 4 (TreeNode Nil 6 Nil)
+-- Result2 should be TreeNode (TreeNode Nil 1 Nil) 4 (TreeNode Nil 6 Nil)
+-- Result3 should be Nil
+-- Result4 should be TreeNode (TreeNode Nil 1 Nil) 2 (TreeNode Nil 3 Nil)
+-- Result5 should be manually computed and verified
+-- Result6 should be TreeNode (TreeNode (TreeNode Nil 2 Nil) 6 (TreeNode Nil 12 Nil)) 8 (TreeNode (TreeNode Nil 10 Nil) 4 (TreeNode Nil 14 Nil))
+
