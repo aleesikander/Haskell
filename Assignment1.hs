@@ -1,18 +1,20 @@
 --                             Easy
 -- Q1
 
-targetSum :: (Ord a, Num a) => [a] -> a -> [(a,a)]
-targetSum array target = sortByFirstElement $ filter meetsconditions allPairs
-            where
-                meetsconditions (a,b) = a +b == target
-                allPairs = [(x,y) | x <- array, y <- array, x>=y]
+insertSort :: Ord a => [(a, a)] -> [(a, a)]
+insertSort [] = []
+insertSort (x:xs) = insert x (insertSort xs)
+  where
+    insert y [] = [y]
+    insert y (z:zs)
+      | fst y < fst z = y : z : zs
+      | otherwise = z : insert y zs
 
-sortByFirstElement :: Ord a => [(a,a)] -> [(a,a)]
-sortByFirstElement [] = []
-sortByFirstElement (x:xs) = sortByFirstElement smaller ++ [x] ++ sortByFirstElement larger
-            where
-                smaller = [a|a<-xs,fst a <= fst x]
-                larger = [a|a<-xs, fst a > fst x]
+-- Function to find target sum pairs with ordered elements, without imports
+targetSum :: (Ord a, Num a) => [a] -> a -> [(a, a)]
+targetSum array target = insertSort [(a, b) | a <- array, b <- array, a >= b, a + b == target]
+
+
 
 
 main :: IO ()
