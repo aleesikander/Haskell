@@ -1,9 +1,11 @@
 -- Function to calculate trapped water
 waterCollection :: [Int] -> Int
-waterCollection heights = sum $ zipWith min maxL maxR `zipWith` subtract heights
+waterCollection heights = (*2) $ sum $ map calculateWater [1 .. length heights - 2]
   where
-    maxLeft = scanl1 max heights -- Maximum from the left
-    maxRight = scanr1 max heights -- Maximum from the right
+    calculateWater i = let
+      leftMax = maximum $ take i heights
+      rightMax = maximum $ drop (i + 1) heights
+      in max 0 (min leftMax rightMax - (heights !! i))
 
 -- Main function to run the test cases
 main :: IO ()
