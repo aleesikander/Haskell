@@ -1,18 +1,9 @@
 --                             Easy
 -- Q1
 
-insertSort :: Ord a => [(a, a)] -> [(a, a)]
-insertSort [] = []
-insertSort (x:xs) = insert x (insertSort xs)
-  where
-    insert y [] = [y]
-    insert y (z:zs)
-      | fst y < fst z = y : z : zs
-      | otherwise = z : insert y zs
-
--- Function to find target sum pairs with ordered elements, without imports
-targetSum :: (Ord a, Num a) => [a] -> a -> [(a, a)]
-targetSum array target = insertSort [(a, b) | a <- array, b <- array, a >= b, a + b == target]
+targetSum :: (Ord a, Num a) => [a] -> a -> [[a]]
+targetSum array target =
+  [[a, b] | a <- array, b <- array, a >= b, a + b == target]
 
 
 
